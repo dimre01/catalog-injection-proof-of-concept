@@ -2,13 +2,21 @@
 
 A sandbox for sharing one set of dependency versions across separate projects with [Bun catalogs](https://bun.com/docs/install/catalogs).
 
-NB: To ship this proof of concept faster, I used Bun APIs to read and write files and to read command-line arguments. The final version will use only Node's built-in modules, and will write the catalog where each package manager reads it: catalogs in pnpm-workspace.yaml for pnpm, and workspaces.catalogs in the root package.json for Bun.
+NB: To ship this proof of concept faster, I used Bun APIs to read and write files and to read command-line arguments. The final version will use only Node's built-in modules, and will write the catalog where each package manager reads it: `catalogs` in `pnpm-workspace.yaml` for pnpm, and `workspaces.catalogs` in the root `package.json` for Bun.
 
 ## Why
 
 A Bun workspace root can declare dependency versions once under `workspaces.catalogs`. Packages then ask for `catalog:<name>` instead of pinning their own versions. That works inside one monorepo. This solution doesn't work across multiple repositories, because Bun only reads catalogs from the workspace root's `package.json`.
 
-This project tries a workaround: the `catalog` package owns the Catalog. A script copies that catalog into a destination project's `package.json`, so the destination can use `catalog:my-catalog` and get the central versions.
+This project tries a workaround: 
+- The `catalog` package owns the Catalog. 
+- A script copies that catalog into a destination project's `package.json`, so the destination can use `catalog:my-catalog` and get the central versions.
+
+In the final implementation, the catalog injection script will likely be called in a post-install hook so that the catalog is updated whenever the consumer installs a new version of the catalog package. 
+
+For this proof-of-concept, we run the injection script manually (see the Structure section for a breakdown of how the script works).
+
+Bun skips dependency postinstall scripts by default, so each consuming project will need to list the catalog package in `trustedDependencies` or will have to run the injection script manually after install.
 
 ## Structure
 
@@ -36,13 +44,9 @@ The script reads `my-catalog` from `catalog/package.json` and writes it to the d
 
 ```sh
 cd catalog
-bun inject-catalog.js --destinationPackagePath ../consumer
+bun inject-catalog.js --destinationPackagePath ../consumer/package.json
 ```
 
-In the final implementation, this script will likely be called in a post-install hook so that the catalog is updated whenever they install a new version of the catalog package. 
-For this proof-of-concept, we run the script manually.
-
-Bun skips dependency postinstall scripts by default, so each consuming project will need to list the catalog package in `trustedDependencies` or will have to run the injection script manually after install.
 
 ### `consumer/`
 
