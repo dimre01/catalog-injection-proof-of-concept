@@ -13,7 +13,9 @@ const { values } = parseArgs({
     destinationPackagePath: {
       type: "string",
     },
-  }
+  },
+  strict: true,
+  allowPositionals: true,
 });
 
 const catalog = workspaces?.catalogs?.[CATALOG_NAME];
