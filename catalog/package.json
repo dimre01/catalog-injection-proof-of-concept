@@ -6,6 +6,18 @@
   "devDependencies": {
     "@types/bun": "latest"
   },
+  "workspaces": {
+    "packages": [],
+    "catalogs": {
+      "my-catalog": {
+        "react": "^19.0.0",
+        "react-dom": "^19.0.0"
+      }
+    } 
+  },
+  "dependencies": {
+    "react": "catalog:my-catalog"
+  },
   "peerDependencies": {
     "typescript": "^7"
   }
