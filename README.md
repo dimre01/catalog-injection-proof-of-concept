@@ -2,7 +2,8 @@
 
 A sandbox for sharing one set of dependency versions across separate projects with [Bun catalogs](https://bun.com/docs/install/catalogs).
 
-NB: To ship this proof of concept faster, I used Bun APIs to read and write files and to read command-line arguments. The final version will use only Node's built-in modules, and will write the catalog where each package manager reads it: `catalogs` in `pnpm-workspace.yaml` for pnpm, and `workspaces.catalogs` in the root `package.json` for Bun.
+
+NB: This proof-of-concept only works with Bun. The final version of this implementation will write the catalog where each package manager reads it: `catalogs` in `pnpm-workspace.yaml` for pnpm, and `workspaces.catalogs` in the root `package.json` for Bun.
 
 ## Why
 
